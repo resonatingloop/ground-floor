@@ -218,3 +218,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# plans & specs
+plans/
+specs/
+
+# private research material and generated outputs
+data/private/
+data/raw/
+artifacts/
