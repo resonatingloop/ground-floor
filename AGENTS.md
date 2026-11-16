@@ -193,7 +193,7 @@ private-case packet-draft proof:
 python3 -m unittest discover -s studies/analysis/private-case-pilot/tests -v
 python3 studies/analysis/private-case-pilot/validate.py --pair \
   artifacts/private-case-pilot/case-a/packet-draft-v1 \
-  artifacts/private-case-pilot/case-b/packet-draft-v2
+  artifacts/private-case-pilot/case-b/packet-draft-v4
 ```
 
 passing prototype tests proves only that the historical code still behaves as

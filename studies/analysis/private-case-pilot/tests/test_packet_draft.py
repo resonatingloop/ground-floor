@@ -127,6 +127,121 @@ class PacketDraftTests(unittest.TestCase):
         self.assertIn("[ p-0002-owner ]", projection)
         self.assertIn("second answer", projection)
 
+    def test_chatgpt_tree_preserves_visible_branches_and_attachments(self) -> None:
+        export_root = self.root / "export"
+        export_root.mkdir()
+        markdown_id = "file_aaa"
+        image_id = "file_bbb"
+        markdown_payload = b"# attached source\n"
+        image_payload = b"fictional-png-bytes"
+        (export_root / f"{markdown_id}.dat").write_bytes(markdown_payload)
+        (export_root / f"{image_id}.dat").write_bytes(image_payload)
+
+        def message(role: str, content: dict, created: float, attachments: list[dict] | None = None) -> dict:
+            return {
+                "author": {"role": role},
+                "content": content,
+                "create_time": created,
+                "metadata": {"attachments": attachments or []},
+            }
+
+        conversation_id = "conversation-private-id"
+        template_id = "project-private-id"
+        mapping = {
+            "root": {"parent": None, "message": None},
+            "user-1": {
+                "parent": "root",
+                "message": message(
+                    "user",
+                    {"content_type": "text", "parts": ["opening visible turn"]},
+                    1.0,
+                    [{"id": markdown_id, "name": "private-name.md", "mime_type": "text/markdown", "size": len(markdown_payload)}],
+                ),
+            },
+            "recap": {
+                "parent": "user-1",
+                "message": message("assistant", {"content_type": "reasoning_recap", "content": "hidden recap"}, 2.0),
+            },
+            "assistant-1": {
+                "parent": "recap",
+                "message": message("assistant", {"content_type": "text", "parts": ["visible answer"]}, 3.0),
+            },
+            "active": {
+                "parent": "assistant-1",
+                "message": message(
+                    "user",
+                    {
+                        "content_type": "multimodal_text",
+                        "parts": [
+                            "active branch",
+                            {"content_type": "image_asset_pointer", "asset_pointer": f"sediment://{image_id}"},
+                        ],
+                    },
+                    4.0,
+                    [{"id": image_id, "name": "private-image.png", "mime_type": "image/png", "size": len(image_payload)}],
+                ),
+            },
+            "alternate": {
+                "parent": "assistant-1",
+                "message": message("user", {"content_type": "text", "parts": ["alternate branch"]}, 5.0),
+            },
+        }
+        shard = export_root / "conversations-000.json"
+        shard.write_text(
+            json.dumps(
+                [
+                    {
+                        "id": conversation_id,
+                        "conversation_id": conversation_id,
+                        "conversation_template_id": template_id,
+                        "current_node": "active",
+                        "mapping": mapping,
+                    }
+                ]
+            ),
+            encoding="utf-8",
+        )
+        recipe_path = self.recipe()
+        recipe = json.loads(recipe_path.read_text(encoding="utf-8"))
+        recipe["stage_a"] = [
+            {
+                "source_path": str(shard),
+                "expected_sha256": digest(shard),
+                "output_name": "source-001.txt",
+                "mode": "chatgpt-conversation-tree",
+                "conversation_id": conversation_id,
+                "expected_conversation_template_id": template_id,
+                "asset_root": str(export_root),
+                "moment_prefix": "t",
+                "role": "complete fictional conversation tree",
+                "evidence_class": "fictional participant-visible evidence",
+            }
+        ]
+        recipe_path.write_text(json.dumps(recipe), encoding="utf-8")
+        output = self.root / "tree-out"
+        manifest = build_packet(recipe_path, output)
+        validate_packet(output)
+
+        projection = (output / "stage-a" / "source-001.txt").read_text(encoding="utf-8")
+        self.assertIn("complete participant-visible conversation tree", projection)
+        self.assertIn("[ t-0003 | owner | parent t-0002 | path active", projection)
+        self.assertIn("[ t-0004 | owner | parent t-0002 | path alternate", projection)
+        self.assertIn("[attached file: attachment-001.md.export.txt]", projection)
+        self.assertIn("[attached image: attachment-002.png]", projection)
+        self.assertNotIn("hidden recap", projection)
+        self.assertNotIn(conversation_id, projection)
+        self.assertNotIn(markdown_id, projection)
+        self.assertEqual((output / "stage-a" / "attachment-001.md.export.txt").read_bytes(), markdown_payload)
+        self.assertEqual((output / "stage-a" / "attachment-002.png").read_bytes(), image_payload)
+        self.assertEqual(len(manifest["stages"]["stage_a"]["files"]), 3)
+
+        custody = (output / "custody.private.json").read_text(encoding="utf-8")
+        self.assertIn(conversation_id, custody)
+        self.assertIn(markdown_id, custody)
+        (output / "stage-a" / "attachment-002.png").write_bytes(b"tampered")
+        with self.assertRaises(ValidationError):
+            validate_packet(output)
+
     def test_private_paths_do_not_enter_packet_manifest(self) -> None:
         output = self.root / "out-a"
         build_packet(self.recipe(), output)

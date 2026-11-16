@@ -7,7 +7,8 @@ import argparse
 import hashlib
 import json
 import re
-import shutil
+from collections import Counter, defaultdict
+from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -53,11 +54,16 @@ def _require_string(value: Any, label: str) -> str:
     return value
 
 
-def _safe_output_name(value: Any, label: str) -> str:
+def _safe_artifact_name(value: Any, label: str) -> str:
     name = _require_string(value, label)
     parsed = PurePosixPath(name)
     if parsed.is_absolute() or len(parsed.parts) != 1 or name in {".", ".."}:
         raise PacketDraftError(f"{label} must be one safe filename")
+    return name
+
+
+def _safe_output_name(value: Any, label: str) -> str:
+    name = _safe_artifact_name(value, label)
     if not name.endswith(".txt"):
         raise PacketDraftError(f"{label} must use the .txt raw-evidence suffix")
     return name
@@ -191,6 +197,251 @@ def _line_range(source: Path, entry: dict[str, Any], label: str) -> bytes:
     return b"".join(lines[start - 1 : end])
 
 
+def _chatgpt_conversation_tree(
+    source: Path,
+    entry: dict[str, Any],
+    label: str,
+) -> tuple[bytes, list[dict[str, Any]]]:
+    conversation_id = _require_string(entry.get("conversation_id"), f"{label}.conversation_id")
+    expected_template = _require_string(
+        entry.get("expected_conversation_template_id"),
+        f"{label}.expected_conversation_template_id",
+    )
+    prefix = _require_string(entry.get("moment_prefix"), f"{label}.moment_prefix")
+    if not CASE_ID_RE.fullmatch(prefix):
+        raise PacketDraftError(f"{label}.moment_prefix must be a safe lowercase id")
+    asset_root = Path(_require_string(entry.get("asset_root"), f"{label}.asset_root"))
+    if not asset_root.is_absolute() or asset_root.is_symlink() or not asset_root.is_dir():
+        raise PacketDraftError(f"{label}.asset_root must be an absolute real directory")
+
+    exported = json.loads(source.read_text(encoding="utf-8"))
+    if not isinstance(exported, list):
+        raise PacketDraftError(f"{label} export shard must contain a conversation list")
+    matches = [
+        item
+        for item in exported
+        if isinstance(item, dict)
+        and (item.get("id") == conversation_id or item.get("conversation_id") == conversation_id)
+    ]
+    if len(matches) != 1:
+        raise PacketDraftError(f"{label} expected one exact conversation match, found {len(matches)}")
+    conversation = matches[0]
+    if conversation.get("id") != conversation_id or conversation.get("conversation_id") != conversation_id:
+        raise PacketDraftError(f"{label} conversation id fields disagree")
+    if conversation.get("conversation_template_id") != expected_template:
+        raise PacketDraftError(f"{label} conversation template id changed")
+    mapping = _require_dict(conversation.get("mapping"), f"{label}.mapping")
+    current_node = _require_string(conversation.get("current_node"), f"{label}.current_node")
+    if current_node not in mapping:
+        raise PacketDraftError(f"{label}.current_node is absent from mapping")
+
+    source_index = {node_id: index for index, node_id in enumerate(mapping)}
+    children: dict[str | None, list[str]] = defaultdict(list)
+    for node_id, raw_node in mapping.items():
+        node = _require_dict(raw_node, f"{label}.mapping[{node_id!r}]")
+        parent = node.get("parent")
+        if parent is not None and not isinstance(parent, str):
+            raise PacketDraftError(f"{label} node parent must be a string or null")
+        if parent is not None and parent not in mapping:
+            raise PacketDraftError(f"{label} node parent is absent from mapping")
+        children[parent].append(node_id)
+
+    def node_sort_key(node_id: str) -> tuple[float, int]:
+        message = mapping[node_id].get("message")
+        created = message.get("create_time") if isinstance(message, dict) else None
+        return (float(created) if isinstance(created, (int, float)) else float("inf"), source_index[node_id])
+
+    for siblings in children.values():
+        siblings.sort(key=node_sort_key)
+    roots = children[None]
+    if not roots:
+        raise PacketDraftError(f"{label} conversation tree has no root")
+
+    ordered_nodes: list[str] = []
+    visiting: set[str] = set()
+    visited: set[str] = set()
+
+    def visit(node_id: str) -> None:
+        if node_id in visiting:
+            raise PacketDraftError(f"{label} conversation tree contains a cycle")
+        if node_id in visited:
+            return
+        visiting.add(node_id)
+        ordered_nodes.append(node_id)
+        for child in children.get(node_id, []):
+            visit(child)
+        visiting.remove(node_id)
+        visited.add(node_id)
+
+    for root in sorted(roots, key=node_sort_key):
+        visit(root)
+    if len(visited) != len(mapping):
+        raise PacketDraftError(f"{label} conversation tree contains unreachable nodes")
+
+    active_path: set[str] = set()
+    cursor: str | None = current_node
+    while cursor is not None:
+        if cursor in active_path:
+            raise PacketDraftError(f"{label} active path contains a cycle")
+        active_path.add(cursor)
+        cursor = mapping[cursor].get("parent")
+
+    excluded_types = {"reasoning_recap", "thoughts"}
+    visible_nodes: list[str] = []
+    excluded_counts: Counter[str] = Counter()
+    for node_id in ordered_nodes:
+        message = mapping[node_id].get("message")
+        if not isinstance(message, dict):
+            continue
+        role = message.get("author", {}).get("role") if isinstance(message.get("author"), dict) else None
+        content = message.get("content")
+        content_type = content.get("content_type") if isinstance(content, dict) else None
+        if content_type in excluded_types:
+            excluded_counts[str(content_type)] += 1
+            continue
+        if role not in {"user", "assistant"}:
+            excluded_counts[f"role:{role}"] += 1
+            continue
+        if content_type not in {"text", "multimodal_text"}:
+            raise PacketDraftError(f"{label} has unsupported participant-visible content type {content_type!r}")
+        visible_nodes.append(node_id)
+    if not visible_nodes:
+        raise PacketDraftError(f"{label} contains no participant-visible messages")
+
+    moment_ids = {node_id: f"{prefix}-{index:04d}" for index, node_id in enumerate(visible_nodes, 1)}
+
+    def visible_parent(node_id: str) -> str | None:
+        parent = mapping[node_id].get("parent")
+        while parent is not None and parent not in moment_ids:
+            parent = mapping[parent].get("parent")
+        return parent
+
+    attachment_metadata: dict[str, dict[str, Any]] = {}
+    attachment_associations: dict[str, set[str]] = defaultdict(set)
+    attachment_order: list[str] = []
+
+    def register_attachment(raw: Any, moment_id: str) -> str:
+        if not isinstance(raw, str) or not re.fullmatch(r"file_[0-9a-f]+", raw):
+            raise PacketDraftError(f"{label} has an invalid attachment id")
+        if raw not in attachment_associations:
+            attachment_order.append(raw)
+        attachment_associations[raw].add(moment_id)
+        return raw
+
+    for node_id in visible_nodes:
+        message = mapping[node_id]["message"]
+        moment_id = moment_ids[node_id]
+        metadata = message.get("metadata")
+        if metadata is not None and not isinstance(metadata, dict):
+            raise PacketDraftError(f"{label} message metadata must be an object")
+        for raw_attachment in (metadata or {}).get("attachments") or []:
+            attachment = _require_dict(raw_attachment, f"{label} attachment")
+            attachment_id = register_attachment(attachment.get("id"), moment_id)
+            previous = attachment_metadata.get(attachment_id)
+            if previous is not None and previous != attachment:
+                raise PacketDraftError(f"{label} attachment metadata disagrees for one id")
+            attachment_metadata[attachment_id] = attachment
+        content = _require_dict(message.get("content"), f"{label} visible content")
+        parts = content.get("parts")
+        if not isinstance(parts, list):
+            raise PacketDraftError(f"{label} visible content parts must be a list")
+        for part in parts:
+            if isinstance(part, dict) and part.get("content_type") == "image_asset_pointer":
+                pointer = _require_string(part.get("asset_pointer"), f"{label} image asset pointer")
+                if not pointer.startswith("sediment://"):
+                    raise PacketDraftError(f"{label} has an unsupported image asset pointer")
+                register_attachment(pointer.removeprefix("sediment://"), moment_id)
+            elif not isinstance(part, str):
+                raise PacketDraftError(f"{label} has an unsupported participant-visible content part")
+
+    missing_metadata = [item for item in attachment_order if item not in attachment_metadata]
+    if missing_metadata:
+        raise PacketDraftError(f"{label} attachment metadata is missing for {len(missing_metadata)} file(s)")
+
+    extension_by_mime = {
+        "image/png": ".png",
+        "image/jpeg": ".jpg",
+        "text/markdown": ".md.export.txt",
+    }
+    attachment_labels: dict[str, str] = {}
+    extras: list[dict[str, Any]] = []
+    for index, attachment_id in enumerate(attachment_order, 1):
+        metadata = attachment_metadata[attachment_id]
+        mime_type = _require_string(metadata.get("mime_type"), f"{label} attachment mime_type")
+        extension = extension_by_mime.get(mime_type)
+        if extension is None:
+            raise PacketDraftError(f"{label} has unsupported attachment mime type {mime_type!r}")
+        output_name = f"attachment-{index:03d}{extension}"
+        attachment_labels[attachment_id] = output_name
+        attachment_source = asset_root / f"{attachment_id}.dat"
+        if attachment_source.is_symlink() or not attachment_source.is_file():
+            raise PacketDraftError(f"{label} attachment source is missing or not a regular file")
+        declared_size = metadata.get("size")
+        if not isinstance(declared_size, int) or declared_size != attachment_source.stat().st_size:
+            raise PacketDraftError(f"{label} attachment size disagrees with export metadata")
+        extras.append(
+            {
+                "output_name": output_name,
+                "payload": attachment_source.read_bytes(),
+                "source": attachment_source,
+                "role": f"participant-visible attachment associated with {', '.join(sorted(attachment_associations[attachment_id]))}",
+                "evidence_class": "participant-visible primary-source attachment",
+                "mode": "chatgpt-asset-copy",
+                "selection": {
+                    "associations": sorted(attachment_associations[attachment_id]),
+                    "original_name": metadata.get("name"),
+                    "mime_type": mime_type,
+                },
+            }
+        )
+
+    rendered = [
+        "private source projection",
+        "scope: complete participant-visible conversation tree",
+        "topology: active path and alternate branches are retained; parent links skip non-visible export apparatus",
+        f"stable moments: {prefix}-0001 through {prefix}-{len(visible_nodes):04d}",
+        f"participant-visible attachments: {len(extras)}",
+        "excluded export apparatus: " + ", ".join(f"{key}={value}" for key, value in sorted(excluded_counts.items())),
+        "",
+    ]
+    for node_id in visible_nodes:
+        message = mapping[node_id]["message"]
+        content = message["content"]
+        moment_id = moment_ids[node_id]
+        parent = visible_parent(node_id)
+        parent_label = moment_ids[parent] if parent is not None else "root"
+        role = "owner" if message["author"]["role"] == "user" else "assistant"
+        path_label = "active" if node_id in active_path else "alternate"
+        created = message.get("create_time")
+        timestamp = (
+            datetime.fromtimestamp(float(created), tz=timezone.utc).isoformat().replace("+00:00", "Z")
+            if isinstance(created, (int, float))
+            else "unknown"
+        )
+        rendered.append(f"[ {moment_id} | {role} | parent {parent_label} | path {path_label} | {timestamp} ]")
+        for part in content["parts"]:
+            if isinstance(part, str):
+                rendered.append(part)
+            else:
+                attachment_id = part["asset_pointer"].removeprefix("sediment://")
+                rendered.append(f"[attached image: {attachment_labels[attachment_id]}]")
+        metadata_ids = [
+            item["id"]
+            for item in (message.get("metadata") or {}).get("attachments") or []
+            if isinstance(item, dict) and item.get("id") in attachment_labels
+        ]
+        content_ids = {
+            part["asset_pointer"].removeprefix("sediment://")
+            for part in content["parts"]
+            if isinstance(part, dict) and part.get("content_type") == "image_asset_pointer"
+        }
+        for attachment_id in metadata_ids:
+            if attachment_id not in content_ids:
+                rendered.append(f"[attached file: {attachment_labels[attachment_id]}]")
+        rendered.append("")
+    return "\n".join(rendered).encode("utf-8"), extras
+
+
 TRANSFORMS = {
     "copy": _copy_bytes,
     "jsonl-message-range": _jsonl_message_range,
@@ -199,14 +450,16 @@ TRANSFORMS = {
 }
 
 
-def _render_source(source: Path, entry: dict[str, Any], label: str) -> bytes:
+def _render_source(source: Path, entry: dict[str, Any], label: str) -> tuple[bytes, list[dict[str, Any]]]:
     mode = _require_string(entry.get("mode"), f"{label}.mode")
+    if mode == "chatgpt-conversation-tree":
+        return _chatgpt_conversation_tree(source, entry, label)
     transform = TRANSFORMS.get(mode)
     if transform is None:
         raise PacketDraftError(f"{label}.mode is unsupported: {mode}")
     if mode == "copy":
-        return transform(source)  # type: ignore[misc]
-    return transform(source, entry, label)  # type: ignore[misc]
+        return transform(source), []  # type: ignore[misc]
+    return transform(source, entry, label), []  # type: ignore[misc]
 
 
 def build_packet(recipe_path: Path, output: Path) -> dict[str, Any]:
@@ -248,7 +501,7 @@ def build_packet(recipe_path: Path, output: Path) -> dict[str, Any]:
             target = stage_directory / output_name
             if target.exists():
                 raise PacketDraftError(f"duplicate output name in {stage_key}: {output_name}")
-            payload = _render_source(source, entry, f"{stage_key}[{index}]")
+            payload, extra_artifacts = _render_source(source, entry, f"{stage_key}[{index}]")
             target.write_bytes(payload)
             relative = target.relative_to(output).as_posix()
             record = {
@@ -275,6 +528,46 @@ def build_packet(recipe_path: Path, output: Path) -> dict[str, Any]:
                     "private_speaker_map": entry.get("speaker_map"),
                 }
             )
+            for extra in extra_artifacts:
+                extra_name = _safe_artifact_name(extra["output_name"], f"{stage_key}[{index}].extra.output_name")
+                if Path(extra_name).suffix not in {".png", ".jpg", ".txt"}:
+                    raise PacketDraftError(f"{stage_key}[{index}] produced an unsupported attachment suffix")
+                extra_target = stage_directory / extra_name
+                if extra_target.exists():
+                    raise PacketDraftError(f"duplicate output name in {stage_key}: {extra_name}")
+                extra_payload = extra["payload"]
+                if not isinstance(extra_payload, bytes):
+                    raise PacketDraftError(f"{stage_key}[{index}] produced invalid attachment bytes")
+                extra_target.write_bytes(extra_payload)
+                extra_relative = extra_target.relative_to(output).as_posix()
+                files.append(
+                    {
+                        "path": extra_relative,
+                        "sha256": sha256_bytes(extra_payload),
+                        "bytes": len(extra_payload),
+                        "role": _require_string(extra.get("role"), f"{stage_key}[{index}].extra.role"),
+                        "evidence_class": _require_string(
+                            extra.get("evidence_class"),
+                            f"{stage_key}[{index}].extra.evidence_class",
+                        ),
+                        "mode": _require_string(extra.get("mode"), f"{stage_key}[{index}].extra.mode"),
+                    }
+                )
+                extra_source = extra.get("source")
+                if not isinstance(extra_source, Path) or extra_source.is_symlink() or not extra_source.is_file():
+                    raise PacketDraftError(f"{stage_key}[{index}] produced an invalid attachment source")
+                custody_entries.append(
+                    {
+                        "stage": stage_key,
+                        "output": extra_relative,
+                        "source_path": str(extra_source),
+                        "resolved_source_path": str(extra_source.resolve()),
+                        "source_sha256": sha256_file(extra_source),
+                        "source_bytes": extra_source.stat().st_size,
+                        "selection": extra.get("selection"),
+                        "private_speaker_map": None,
+                    }
+                )
         stage_records[stage_key] = {
             "access": "primary-source-only" if stage_key == "stage_a" else "sealed-until-stage-a-return-is-fingerprinted",
             "files": files,

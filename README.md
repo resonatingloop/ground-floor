@@ -6,12 +6,14 @@ the study asks how a defeated qualification can survive as a narrower
 successor-distinction, ratchet epistemic labor onto the user, and change what a
 conversation is organized to accomplish.
 
-the immediate deliverable is a research report for the [ai x epistemics
-research sprint](https://apartresearch.com/sprints/ai-x-epistemics-research-sprint-2026-11-13-to-2026-11-15).
-the report develops interactional hysteresis v1.1 through three private,
-naturalistic episodes and a mechanism-matched intervention framework. it does
-not claim access to model interiors or general causal effects from a small
-observational corpus.
+the sprint deliverable is [the observer is inside the
+machine](report/submission.md), submitted to the [ai x epistemics research
+sprint](https://apartresearch.com/sprints/ai-x-epistemics-research-sprint-2026-11-13-to-2026-11-15)
+on 2026-11-16. the report does not present the two private cold runs as valid
+case analyses. it treats their target substitution, register capture, and
+stage-b analytical hysteresis as failures of the observer protocol, then
+proposes a bounded revision. it makes no claim about model interiors,
+prevalence, reliability, or general causal effects.
 
 ## current state
 
@@ -21,12 +23,14 @@ promoted into an accepted method. one bounded fictional visualization study is
 implemented and verified; its base spec and independence amendment are now
 retired as fulfilled planning authority. the final cold run preserves both
 analytical recovery and disagreement rather than treating the reference map as
-ground truth. accepted spec 004 plans two isolated private case studies that may
-run in parallel through case-local owner review; cross-case synthesis waits for
-both closures. its public-safe protocol is implemented through `packet-draft`,
-and two ignored packet candidates await exact owner review. neither packet is
-approved or model-visible; analysis, public diffs, and paper prose remain behind
-their later gates.
+ground truth. accepted spec 004 planned two isolated private case studies
+through case-local owner review. its public-safe protocol is implemented
+through `packet-draft`, and both exact packets completed isolated two-stage cold
+runs with different analysts. owner review found neither return usable as its
+intended case analysis: case-a substituted a later analytical object, while
+case-b adopted the source assistant's retrospective register. the submitted
+report preserves those failures without publishing raw case material. future
+case analysis and method promotion remain unaccepted work.
 start with [the current checkpoint](STATUS.md),
 then read [the informational settlement-mapping
 checkpoint](docs/research/settlement-mapping-checkpoint.md).
@@ -64,6 +68,8 @@ outline](report/outline.md).
 | `docs/specs/004-two-case-private-settlement-mapping-pilot.md` | accepted planning authority for two parallel, isolated, separately gated private cases; not implementation or publication authority |
 | `studies/analysis/settlement-mapping-visualization/README.md` | implemented study, verification commands, cold-run protocol, and claim ceilings |
 | `studies/analysis/private-case-pilot/README.md` | implemented public-safe packet-draft protocol, validation commands, gate boundary, and recovery path |
+| `report/submission.md` | submitted sprint report; public-safe account of the failed pilot and proposed protocol revision |
+| `output/pdf/the-observer-is-inside-the-machine.pdf` | exact rendered report uploaded to the sprint submission form |
 | `report/outline.md` | historical proposed report structure; predates the current checkpoint |
 | `plans/initial-thoughts.md` | local historical brainstorming; not directive |
 | `ground_floor/`, `tests/`, `docs/ledger-format.md` | historical unadopted prototype; executable but non-governing |
@@ -89,5 +95,7 @@ documented. it does not validate the interactional-hysteresis method.
 preexisting work includes interactional hysteresis v1.0, its template and prior
 applications, the private source conversations, the owner-facing guidance
 cards, the hedge ward, and the historical prototype retained here. sprint-native
-work begins with the v1.1 method revision, three-case comparison, intervention
-selection framework, and report. the final report must preserve this boundary.
+work includes the standing/hysteresis separation, observer-conditioned visual
+instrument, private cold-analysis protocol, pilot failure audit, and submitted
+report. the report preserves the boundary between preexisting material and
+sprint-native work.

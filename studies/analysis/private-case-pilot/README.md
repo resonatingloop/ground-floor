@@ -31,13 +31,15 @@ each ignored packet draft contains:
 packet.json                 fingerprinted packet identity and gate state
 custody.private.json        private source locators and source fingerprints
 owner-review.txt            complete inclusion, omission, and exposure review
-stage-a/*.txt               primary-source-only projection
+stage-a/*                   primary-source-only projection and attachments
 stage-b/*.txt               reference material, sealed until stage a is frozen
 ```
 
 `packet_draft.py` supports exact byte copies, normalized jsonl message ranges,
-prompt/response projections with stable moment ids, and exact line ranges. all
-source paths remain in `custody.private.json`; they never enter `packet.json`.
+prompt/response projections, complete chatgpt export trees with branch topology
+and participant-visible attachments, and exact line ranges. all source paths
+and original export identifiers remain in `custody.private.json`; they never
+enter `packet.json` or the neutral source projection.
 
 ## commands
 
@@ -57,7 +59,7 @@ python3 studies/analysis/private-case-pilot/validate.py \
 
 python3 studies/analysis/private-case-pilot/validate.py \
   --pair artifacts/private-case-pilot/case-a/packet-draft-v1 \
-         artifacts/private-case-pilot/case-b/packet-draft-v2
+         artifacts/private-case-pilot/case-b/packet-draft-v4
 ```
 
 run the public-safe fictional proof:

@@ -232,6 +232,7 @@ specs/
 data/private/
 data/raw/
 artifacts/
+/tmp/
 
 # private exported session retained locally for later review; `.export.txt`
 # keeps raw evidence outside the project-document checker without editing it
