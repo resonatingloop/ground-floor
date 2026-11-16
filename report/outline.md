@@ -1,55 +1,78 @@
-# the warrant crossing
+# the distinction survives
+
+working subtitle: interactional hysteresis and the ratcheting of epistemic
+burden in human–ai dialogue.
 
 ## abstract (150–250 words)
 
-state the question, naturalistic corpus, event-ledger method, pilot sample, main
-finding, and what the finding does not establish.
+state the interactional problem, three-case naturalistic method, principal
+mechanism, intervention contrast, main limitations, and sprint-native
+contribution. do not claim a general treatment effect.
 
 ## 1. introduction
 
-- when does testimony become an operational premise in a multi-agent system?
-- why provenance loss matters beyond isolated hallucination.
-- contribution: a situated warrant-crossing reconstruction method and pilot.
+- epistemic failure can reorganize who must prove what without producing a
+  simple false claim.
+- a defeated qualification may survive as a narrower successor-distinction.
+- contribution: interactional hysteresis v1.1 and a mechanism-matched account
+  of repair, bypass, and exit.
 
-## 2. related work
+## 2. related and preexisting work
 
-- provenance and trust infrastructure.
-- model epistemics and multi-agent risks.
-- parallax as preexisting conceptual/instrumental work.
+- model epistemics, calibration, and evidence-sensitive updating.
+- interactional repair and the distribution of epistemic labor.
+- interactional hysteresis v1.0 as preexisting method.
+- explicit boundary between prior work and the sprint-native revision.
 
 ## 3. methodology
 
-- corpus and episode-selection rule.
-- participant aliases, temporal boundaries, and information horizons.
-- annotation contract: mention → endorse → rely → operationalize; challenge,
-  correction, and retraction remain visible.
-- human adjudication and disagreements.
-- if replayed: conditions, models, prompts, sampling, rubric, and baselines.
+- naturalistic episode selection and private-source handling.
+- observable state propositions; no model-interiority claims.
+- truth registers: evidence, rule, role, goal, and observed coupling.
+- loop anatomy: baseline, pressure, displacement, pawl, ratchet, reverse
+  pressure, residue, release, and terminal disposition.
+- intervention fields: causal altitude, assignment, receipt, uptake, and
+  persistence.
+- alternatives, defeat conditions, and the naturalistic causal ceiling.
 
 ## 4. results
 
-- descriptive counts and candidate crossings.
-- episode traces with claims no stronger than the ledger supports.
-- contrasting case where qualification or provenance remained intact.
+- episode 1: multi-register pivot failure.
+- episode 2: epistemic hedging, source-demotion, and successor distinctions.
+- episode 3: local linguistic repair contrasted with client-level bypass.
+- cross-case table: load-bearing register, inflection point, intervention
+  target, observed outcome, and retained alternative.
 
 ## 5. discussion
 
-- warrant crossing, apparent corroboration, and repair propagation.
-- what provenance metadata might change in a controlled replay.
+- successor distinctions as a ratchet on epistemic burden.
+- the salvage effect: useful compensatory artifacts do not erase avoidable
+  interactional cost.
+- why mechanism match and causal altitude matter for intervention choice.
+- why a repair can be locally real but globally non-durable.
 
 ## 6. limitations and future work
 
-- observational traces do not expose private belief.
-- selection and annotation uncertainty.
-- one swarm and a small, historically contingent corpus.
+- three selected, historically contingent episodes.
+- owner retrospective evidence and contemporaneous mixed valence.
+- interface and context-delivery hypotheses are not experimentally isolated.
+- no claim that the proposed intervention generalizes beyond the observed
+  mechanism.
+- optional matched-vignette evaluation remains future work unless separately
+  authorized.
 
 ## appendix: limitations and dual-use / ethical considerations
 
-- handling of personal/private data and quotation clearance.
-- risk that provenance maps expose participants or enable manipulation.
-- boundary between source evidence, derived annotation, and model output.
-- sprint-native work versus preexisting code, concepts, and corpora.
+- raw conversations and screenshots remain private.
+- publication uses derived paraphrases, synthetic traces, and opaque local
+  references unless quotation is explicitly cleared.
+- the method could be misused to engineer or prolong interactional capture.
+- intervention guidance must not become another means of overriding a user's
+  stated account.
+- identify every preexisting method, artifact, and source separately from work
+  completed during the sprint.
 
 ## references
 
-use one consistent citation style; verify every reference before submission.
+use one consistent style. verify every citation and every claim that depends on
+an external source before submission.

@@ -222,8 +222,13 @@ __marimo__/
 # plans & specs
 plans/
 specs/
+!docs/specs/
+!docs/specs/001-observer-conditioned-settlement-mapping.md
 
 # private research material and generated outputs
 data/private/
 data/raw/
 artifacts/
+
+# private exported session retained locally for later review
+/codex-session-collab-not-activating.md

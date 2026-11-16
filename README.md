@@ -1,18 +1,64 @@
 # ground-floor
 
-`ground-floor` is a small research instrument for tracing **warrant crossings**:
-moments when a proposition moves from being mentioned or reported to being
-endorsed, relied upon, or operationalized by another participant in a
-multi-agent system.
+`ground-floor` is the working repository for **the distinction survives**, a
+small naturalistic study of interactional hysteresis in human–ai epistemics.
+the study asks how a defeated qualification can survive as a narrower
+successor-distinction, ratchet epistemic labor onto the user, and change what a
+conversation is organized to accomplish.
 
-the immediate project is a pilot study for the [ai x epistemics research
-sprint](https://apartresearch.com/sprints/ai-x-epistemics-research-sprint-2026-11-13-to-2026-11-15).
-it reconstructs what was observable to whom at a historical moment without
-pretending to recover anyone's private beliefs.
+the immediate deliverable is a research report for the [ai x epistemics
+research sprint](https://apartresearch.com/sprints/ai-x-epistemics-research-sprint-2026-11-13-to-2026-11-15).
+the report develops interactional hysteresis v1.1 through three private,
+naturalistic episodes and a mechanism-matched intervention framework. it does
+not claim access to model interiors or general causal effects from a small
+observational corpus.
 
-## quickest path
+## current state
 
-python 3.11 or newer is the only requirement.
+the repository has been pivoted from an unadopted warrant-crossing prototype.
+the current research object has been grounded conceptually but has not been
+promoted into an accepted method, plan, or specification. start with [the
+current checkpoint](STATUS.md), then read [the informational settlement-mapping
+checkpoint](docs/research/settlement-mapping-checkpoint.md).
+
+## research boundary
+
+- raw chats, screenshots, exports, and local corpora remain outside tracked
+  repository state.
+- public examples are paraphrased, synthetic, or explicitly cleared for
+  quotation.
+- propositions, evidence relations, rules, roles, and goals may acquire
+  interactional standing; the current checkpoint treats their standing and
+  consequences as the object, not as claims about hidden model beliefs.
+- source availability, source uptake, and source-governed behavior remain
+  distinct.
+- the report preserves both contemporaneous benefit and retrospectively
+  recognized interactional cost.
+- provider calls and intervention evals require a separate explicit handoff.
+
+see [the data boundary](data/README.md) and [the report
+outline](report/outline.md).
+
+## authority map
+
+| artifact | authority |
+| --- | --- |
+| `README.md` | current front door and research boundary |
+| `AGENTS.md` | agent authorization, collaboration routing, privacy boundary, validation, and close protocol |
+| `STATUS.md` | current checkpoint and next transition |
+| `docs/research/settlement-mapping-checkpoint.md` | advisory informational synthesis; current conceptual account, not an accepted method |
+| `docs/roadmaps/001-interactional-hysteresis-sprint.md` | parked workshop draft; predates the current conceptual account and has no implementation authority |
+| `docs/specs/001-observer-conditioned-settlement-mapping.md` | parked workshop draft; not current planning authority and not accepted |
+| `report/outline.md` | historical proposed report structure; predates the current checkpoint |
+| `plans/initial-thoughts.md` | local historical brainstorming; not directive |
+| `ground_floor/`, `tests/`, `docs/ledger-format.md` | historical unadopted prototype; executable but non-governing |
+
+## historical prototype
+
+the retained python package validates a fictional warrant-crossing event ledger.
+it remains intact as evidence of an earlier sprint exploration, not as the
+method or result of the current study. python 3.11 or newer is sufficient to
+exercise it:
 
 ```bash
 python3 -m unittest discover -s tests -v
@@ -20,28 +66,13 @@ python3 -m ground_floor validate data/fixtures/synthetic-pilot.jsonl
 python3 -m ground_floor crossings data/fixtures/synthetic-pilot.jsonl
 ```
 
-the fixture is fictional. it demonstrates the method without publishing the
-discord logs, memory snapshots, or other private source material.
+passing these checks proves only that the historical prototype still behaves as
+documented. it does not validate the interactional-hysteresis method.
 
-## research boundary
+## provenance
 
-- raw discord logs, agent logs, memory snapshots, and local corpora belong in
-  `data/private/` or `data/raw/`; both paths are ignored by git.
-- the ledger stores opaque evidence references, not private message contents.
-- public examples must be synthetic or explicitly cleared, and participant ids
-  should be replaced with stable aliases.
-- mention, endorsement, reliance, and operationalization are separate actions.
-  repetition alone is not treated as acceptance.
-- `crossings` identifies candidates for human review; it does not decide that a
-  claim was true, justified, or believed.
-
-see [the ledger format](docs/ledger-format.md) for the annotation contract and
-[the report scaffold](report/outline.md) for the sprint write-up.
-
-## sprint provenance
-
-this repository's initial readme and license predate the sprint implementation.
-the event-ledger code, synthetic fixture, tests, and research/report scaffolds
-were created during the november 13–15, 2026 sprint. the parallax instrument,
-solar flares materials, swarm records, and source corpora are preexisting inputs;
-they are not included here. every report draft should preserve that distinction.
+preexisting work includes interactional hysteresis v1.0, its template and prior
+applications, the private source conversations, the owner-facing guidance
+cards, the hedge ward, and the historical prototype retained here. sprint-native
+work begins with the v1.1 method revision, three-case comparison, intervention
+selection framework, and report. the final report must preserve this boundary.

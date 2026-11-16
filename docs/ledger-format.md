@@ -1,5 +1,10 @@
 # epistemic event ledger
 
+> historical status: this document specifies an executable but unadopted early
+> sprint prototype. it does not govern the current interactional-hysteresis
+> study. see the [repository front door](../README.md) and [informational
+> settlement-mapping checkpoint](research/settlement-mapping-checkpoint.md).
+
 the ledger is newline-delimited json: one observed interactional event per line.
 it records what the corpus supports, not an annotator's reconstruction of a
 participant's private mental state.
