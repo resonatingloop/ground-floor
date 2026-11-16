@@ -17,8 +17,18 @@ observational corpus.
 
 the repository has been pivoted from an unadopted warrant-crossing prototype.
 the current research object has been grounded conceptually but has not been
-promoted into an accepted method, plan, or specification. start with [the
-current checkpoint](STATUS.md), then read [the informational settlement-mapping
+promoted into an accepted method. one bounded fictional visualization study is
+implemented and verified; its base spec and independence amendment are now
+retired as fulfilled planning authority. the final cold run preserves both
+analytical recovery and disagreement rather than treating the reference map as
+ground truth. accepted spec 004 plans two isolated private case studies that may
+run in parallel through case-local owner review; cross-case synthesis waits for
+both closures. its public-safe protocol is implemented through `packet-draft`,
+and two ignored packet candidates await exact owner review. neither packet is
+approved or model-visible; analysis, public diffs, and paper prose remain behind
+their later gates.
+start with [the current checkpoint](STATUS.md),
+then read [the informational settlement-mapping
 checkpoint](docs/research/settlement-mapping-checkpoint.md).
 
 ## research boundary
@@ -49,6 +59,11 @@ outline](report/outline.md).
 | `docs/research/settlement-mapping-checkpoint.md` | advisory informational synthesis; current conceptual account, not an accepted method |
 | `docs/roadmaps/001-interactional-hysteresis-sprint.md` | parked workshop draft; predates the current conceptual account and has no implementation authority |
 | `docs/specs/001-observer-conditioned-settlement-mapping.md` | parked workshop draft; not current planning authority and not accepted |
+| `docs/specs/002-settlement-mapping-visualization-study.md` | retired fulfilled base plan for the bounded visualization study |
+| `docs/specs/003-settlement-mapping-independent-analysis-amendment.md` | retired fulfilled amendment requiring builder/analyst separation and a sealed cold-read protocol |
+| `docs/specs/004-two-case-private-settlement-mapping-pilot.md` | accepted planning authority for two parallel, isolated, separately gated private cases; not implementation or publication authority |
+| `studies/analysis/settlement-mapping-visualization/README.md` | implemented study, verification commands, cold-run protocol, and claim ceilings |
+| `studies/analysis/private-case-pilot/README.md` | implemented public-safe packet-draft protocol, validation commands, gate boundary, and recovery path |
 | `report/outline.md` | historical proposed report structure; predates the current checkpoint |
 | `plans/initial-thoughts.md` | local historical brainstorming; not directive |
 | `ground_floor/`, `tests/`, `docs/ledger-format.md` | historical unadopted prototype; executable but non-governing |

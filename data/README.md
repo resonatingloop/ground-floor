@@ -15,5 +15,13 @@ portable. public research artifacts may contain:
 - explicitly marked synthetic traces; or
 - quotations separately cleared by the owner for publication.
 
-the ignored root-level collab-session export is retained locally for analysis.
-its presence is not publication authority.
+the ignored root-level collab-session export is retained locally for analysis
+with an `.export.txt` suffix. that suffix classifies it as raw evidence rather
+than project documentation; its bytes and embedded source-relative links must
+remain unchanged. its presence is not publication authority.
+
+private case recipes, custody records, source projections, references, and
+owner review slips remain beneath ignored `artifacts/private-case-pilot/` and
+use `.txt` or `.json` rather than project-document suffixes. packet validation,
+fingerprinting, or owner inspection does not authorize model exposure,
+analysis, tracking, quotation, or publication.

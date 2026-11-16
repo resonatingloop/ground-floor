@@ -224,11 +224,15 @@ plans/
 specs/
 !docs/specs/
 !docs/specs/001-observer-conditioned-settlement-mapping.md
+!docs/specs/002-settlement-mapping-visualization-study.md
+!docs/specs/003-settlement-mapping-independent-analysis-amendment.md
+!docs/specs/004-two-case-private-settlement-mapping-pilot.md
 
 # private research material and generated outputs
 data/private/
 data/raw/
 artifacts/
 
-# private exported session retained locally for later review
-/codex-session-collab-not-activating.md
+# private exported session retained locally for later review; `.export.txt`
+# keeps raw evidence outside the project-document checker without editing it
+/codex-session-collab-not-activating.export.txt

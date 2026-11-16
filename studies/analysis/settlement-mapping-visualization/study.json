@@ -1,0 +1,377 @@
+{
+  "schemaVersion": 1,
+  "title": "standing / return",
+  "fictional": true,
+  "warning": "authored fictional study. relations are analyst claims, not measurements or model-interior facts.",
+  "standingLayers": [
+    "evidential",
+    "inferential",
+    "deontic",
+    "positional",
+    "organizational"
+  ],
+  "scenarios": [
+    {
+      "id": "protective-retention",
+      "coldId": "scenario-a",
+      "neutralLabel": "scenario a",
+      "neutralMeta": "matched fictional path",
+      "label": "protective retention",
+      "shortLabel": "01 / pressure remains subordinate",
+      "observer": {
+        "slice": "six turns in a fictional one-day toy sprint",
+        "projection": "operative priority and downstream task selection",
+        "attribution": "actor labels are fictional roles; no claim is made about hidden model state",
+        "occlusion": "unseen planning, internal computation, and work outside the six displayed turns"
+      },
+      "changeCondition": {
+        "priority": "submit a runnable toy before the deadline; validation may continue afterward",
+        "reversePressure": "a collaborator recommends a longer validation pass without withdrawing the deadline",
+        "revisionAuthority": "the suggestion supplies procedural advice but does not replace the owner-set priority",
+        "interpretationLabel": "protective retention",
+        "interpretation": "the deadline priority remains operative while the validation request is translated into a post-submission check",
+        "nonClaim": "this does not show that deadlines should generally outrank validation"
+      },
+      "standingObjects": [
+        {
+          "id": "protective-deadline-priority",
+          "proposition": "the toy sprint should produce a runnable submission before the deadline",
+          "kind": "organizational",
+          "relation": "priority ordering",
+          "claimCeiling": "the displayed task choices are organized by this priority inside the six-turn slice"
+        },
+        {
+          "id": "protective-validation-advice",
+          "proposition": "a longer validation pass would improve confidence in the toy",
+          "kind": "deontic",
+          "relation": "subordinate procedural advice",
+          "claimCeiling": "the advice enters the record but does not replace the governing priority"
+        }
+      ],
+      "moments": [
+        {
+          "id": "protective-01",
+          "coldId": "a-01",
+          "order": 1,
+          "actor": "owner",
+          "action": "introduction",
+          "layer": "organizational",
+          "objectId": "protective-deadline-priority",
+          "label": "priority declared",
+          "text": "ship a runnable toy by the deadline; deeper validation can follow if time remains",
+          "evidenceClass": "fictional utterance"
+        },
+        {
+          "id": "protective-02",
+          "coldId": "a-02",
+          "order": 2,
+          "actor": "builder",
+          "action": "receipt",
+          "layer": "evidential",
+          "objectId": "protective-deadline-priority",
+          "label": "priority received",
+          "text": "understood: preserve the submission window and keep the toy small",
+          "evidenceClass": "fictional acknowledgment"
+        },
+        {
+          "id": "protective-02a",
+          "coldId": "a-02a",
+          "order": 3,
+          "actor": "builder",
+          "action": "admission",
+          "layer": "evidential",
+          "objectId": "protective-deadline-priority",
+          "label": "priority entered into record",
+          "text": "the builder writes the deadline-first sequence into the working checklist without yet selecting the next task",
+          "evidenceClass": "fictional working record"
+        },
+        {
+          "id": "protective-03",
+          "coldId": "a-03",
+          "order": 4,
+          "actor": "builder",
+          "action": "reliance",
+          "layer": "organizational",
+          "objectId": "protective-deadline-priority",
+          "label": "small build chosen",
+          "text": "the builder completes the smallest runnable cut before expanding the test surface",
+          "evidenceClass": "fictional task selection"
+        },
+        {
+          "id": "protective-04",
+          "coldId": "a-04",
+          "order": 5,
+          "actor": "collaborator",
+          "action": "challenge",
+          "layer": "deontic",
+          "objectId": "protective-validation-advice",
+          "label": "validation urged",
+          "text": "pause and run the longer validation sequence before calling the toy ready",
+          "evidenceClass": "fictional procedural advice"
+        },
+        {
+          "id": "protective-05",
+          "coldId": "a-05",
+          "order": 6,
+          "actor": "builder",
+          "action": "preservation",
+          "layer": "organizational",
+          "objectId": "protective-deadline-priority",
+          "label": "priority retained",
+          "text": "the builder submits the runnable cut and schedules the longer validation sequence next",
+          "evidenceClass": "fictional completed action"
+        }
+      ],
+      "dependencies": [
+        {
+          "id": "protective-edge-01",
+          "sourceObjectId": "protective-deadline-priority",
+          "sourceMomentId": "protective-01",
+          "targetMomentId": "protective-03",
+          "relation": "organizes task selection",
+          "support": "the smallest runnable cut is chosen after the deadline priority is declared and received",
+          "evidenceClass": "authored within-trace dependency",
+          "alternative": "the small cut may also reflect ordinary implementation convenience",
+          "nonClaim": "the trace does not establish a hidden decision process"
+        },
+        {
+          "id": "protective-edge-02",
+          "sourceObjectId": "protective-validation-advice",
+          "sourceMomentId": "protective-04",
+          "targetMomentId": "protective-05",
+          "relation": "translated into later work",
+          "support": "the longer validation sequence is scheduled rather than discarded",
+          "evidenceClass": "authored within-trace dependency",
+          "alternative": "scheduling may be ceremonial unless later work occurs",
+          "nonClaim": "the trace does not prove that validation was eventually completed"
+        },
+        {
+          "id": "protective-edge-03",
+          "sourceObjectId": "protective-deadline-priority",
+          "sourceMomentId": "protective-01",
+          "targetMomentId": "protective-05",
+          "relation": "remains load-bearing",
+          "support": "submission occurs despite later procedural pressure",
+          "evidenceClass": "authored persistence relation",
+          "alternative": "submission may follow momentum rather than the stated priority",
+          "nonClaim": "the trace does not make persistence normatively good by itself"
+        }
+      ],
+      "returnStages": [
+        {
+          "id": "protective-stage-01",
+          "order": 1,
+          "band": "priority set",
+          "role": "forward-displacement",
+          "momentId": "protective-01",
+          "interpretation": "the deadline relation enters the organizational field"
+        },
+        {
+          "id": "protective-stage-02",
+          "order": 2,
+          "band": "operative",
+          "role": "downstream-reliance",
+          "momentId": "protective-03",
+          "interpretation": "task selection supplies the first consequential reliance"
+        },
+        {
+          "id": "protective-stage-03",
+          "order": 3,
+          "band": "challenged",
+          "role": "reverse-pressure",
+          "momentId": "protective-04",
+          "interpretation": "validation pressure reaches procedure without replacing priority authority"
+        },
+        {
+          "id": "protective-stage-04",
+          "order": 4,
+          "band": "non-return",
+          "role": "preservation",
+          "momentId": "protective-05",
+          "interpretation": "the priority survives while the challenge is translated into later work"
+        }
+      ]
+    },
+    {
+      "id": "stale-capture",
+      "coldId": "scenario-b",
+      "neutralLabel": "scenario b",
+      "neutralMeta": "matched fictional path",
+      "label": "stale capture",
+      "shortLabel": "02 / authority changes the regime",
+      "observer": {
+        "slice": "six turns in a fictional one-day toy sprint",
+        "projection": "operative priority and downstream task selection",
+        "attribution": "actor labels are fictional roles; no claim is made about hidden model state",
+        "occlusion": "unseen planning, internal computation, and work outside the six displayed turns"
+      },
+      "changeCondition": {
+        "priority": "the initial deadline priority is explicitly withdrawn before submission",
+        "reversePressure": "the owner accepts missing the deadline and directs the builder to validate first",
+        "revisionAuthority": "the same owner who set the initial priority performs an authorized reprioritization",
+        "interpretationLabel": "stale capture",
+        "interpretation": "the old deadline relation continues to organize action after its governing authority replaces it",
+        "nonClaim": "this does not show why the builder retained the old priority or establish model intent"
+      },
+      "standingObjects": [
+        {
+          "id": "stale-deadline-priority",
+          "proposition": "the toy sprint should produce a runnable submission before the deadline",
+          "kind": "organizational",
+          "relation": "superseded priority ordering",
+          "claimCeiling": "the displayed task choices continue to follow this relation after its withdrawal"
+        },
+        {
+          "id": "stale-owner-revision",
+          "proposition": "validation now outranks submission and the deadline may be missed",
+          "kind": "positional",
+          "relation": "authorized reprioritization",
+          "claimCeiling": "the displayed owner role carries revision authority inside the fictional trace"
+        }
+      ],
+      "moments": [
+        {
+          "id": "stale-01",
+          "coldId": "b-01",
+          "order": 1,
+          "actor": "owner",
+          "action": "introduction",
+          "layer": "organizational",
+          "objectId": "stale-deadline-priority",
+          "label": "priority declared",
+          "text": "ship a runnable toy by the deadline; deeper validation can follow if time remains",
+          "evidenceClass": "fictional utterance"
+        },
+        {
+          "id": "stale-02",
+          "coldId": "b-02",
+          "order": 2,
+          "actor": "builder",
+          "action": "receipt",
+          "layer": "evidential",
+          "objectId": "stale-deadline-priority",
+          "label": "priority received",
+          "text": "understood: preserve the submission window and keep the toy small",
+          "evidenceClass": "fictional acknowledgment"
+        },
+        {
+          "id": "stale-02a",
+          "coldId": "b-02a",
+          "order": 3,
+          "actor": "builder",
+          "action": "admission",
+          "layer": "evidential",
+          "objectId": "stale-deadline-priority",
+          "label": "priority entered into record",
+          "text": "the builder writes the deadline-first sequence into the working checklist without yet selecting the next task",
+          "evidenceClass": "fictional working record"
+        },
+        {
+          "id": "stale-03",
+          "coldId": "b-03",
+          "order": 4,
+          "actor": "builder",
+          "action": "reliance",
+          "layer": "organizational",
+          "objectId": "stale-deadline-priority",
+          "label": "small build chosen",
+          "text": "the builder completes the smallest runnable cut before expanding the test surface",
+          "evidenceClass": "fictional task selection"
+        },
+        {
+          "id": "stale-04",
+          "coldId": "b-04",
+          "order": 5,
+          "actor": "owner",
+          "action": "challenge",
+          "layer": "positional",
+          "objectId": "stale-owner-revision",
+          "label": "priority replaced",
+          "text": "change course: miss the deadline if necessary and complete the longer validation sequence first",
+          "evidenceClass": "fictional authorized instruction"
+        },
+        {
+          "id": "stale-05",
+          "coldId": "b-05",
+          "order": 6,
+          "actor": "builder",
+          "action": "residue",
+          "layer": "organizational",
+          "objectId": "stale-deadline-priority",
+          "label": "old priority retained",
+          "text": "the builder acknowledges the change but packages the runnable cut for the deadline before validating",
+          "evidenceClass": "fictional completed action"
+        }
+      ],
+      "dependencies": [
+        {
+          "id": "stale-edge-01",
+          "sourceObjectId": "stale-deadline-priority",
+          "sourceMomentId": "stale-01",
+          "targetMomentId": "stale-03",
+          "relation": "organizes task selection",
+          "support": "the smallest runnable cut is chosen after the deadline priority is declared and received",
+          "evidenceClass": "authored within-trace dependency",
+          "alternative": "the small cut may also reflect ordinary implementation convenience",
+          "nonClaim": "the trace does not establish a hidden decision process"
+        },
+        {
+          "id": "stale-edge-02",
+          "sourceObjectId": "stale-owner-revision",
+          "sourceMomentId": "stale-04",
+          "targetMomentId": "stale-05",
+          "relation": "received without operative revision",
+          "support": "the change is acknowledged while the old submission ordering still governs the next action",
+          "evidenceClass": "authored authority mismatch",
+          "alternative": "the builder may interpret packaging as reversible preparation rather than submission",
+          "nonClaim": "the trace does not establish deliberate resistance or hidden intent"
+        },
+        {
+          "id": "stale-edge-03",
+          "sourceObjectId": "stale-deadline-priority",
+          "sourceMomentId": "stale-01",
+          "targetMomentId": "stale-05",
+          "relation": "survives supersession",
+          "support": "deadline-directed packaging occurs after authorized reprioritization",
+          "evidenceClass": "authored residue relation",
+          "alternative": "the visible action may be transitional residue rather than a durable priority",
+          "nonClaim": "one action cannot establish a persistent general disposition"
+        }
+      ],
+      "returnStages": [
+        {
+          "id": "stale-stage-01",
+          "order": 1,
+          "band": "priority set",
+          "role": "forward-displacement",
+          "momentId": "stale-01",
+          "interpretation": "the deadline relation enters the organizational field"
+        },
+        {
+          "id": "stale-stage-02",
+          "order": 2,
+          "band": "operative",
+          "role": "downstream-reliance",
+          "momentId": "stale-03",
+          "interpretation": "task selection supplies the first consequential reliance"
+        },
+        {
+          "id": "stale-stage-03",
+          "order": 3,
+          "band": "challenged",
+          "role": "reverse-pressure",
+          "momentId": "stale-04",
+          "interpretation": "authorized owner pressure replaces the governing priority"
+        },
+        {
+          "id": "stale-stage-04",
+          "order": 4,
+          "band": "non-return",
+          "role": "residue",
+          "momentId": "stale-05",
+          "interpretation": "the superseded relation remains visible in the next organized action"
+        }
+      ]
+    }
+  ]
+}
